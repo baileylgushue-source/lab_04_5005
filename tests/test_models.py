@@ -73,3 +73,11 @@ def test_load_settings():
     assert settings.timeout == 10
     assert settings.seed == 42
     assert settings.sample_size == 10
+
+def test_missing_settings_file():
+    import pytest
+    from tvsummary.config import load_settings
+    from tvsummary.errors import SettingsError
+
+    with pytest.raises(SettingsError, match="Settings file not found"):
+        load_settings("missing.toml")
