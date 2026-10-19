@@ -1,7 +1,9 @@
 import unittest
+
 from tvsummary.models import Show
 from tvsummary.aggregations import GenreAggregation
 from tvsummary.aggregations import LanguageAggregation
+import pytest
 
 class TestShow(unittest.TestCase):
 
@@ -50,3 +52,24 @@ class TestShow(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+@pytest.mark.parametrize(
+    "language, expected",
+    [
+        ("English", "English"),
+        ("French", "French"),
+        (None, None),
+        (12345, None),
+    ],
+)
+def test_show_language(language, expected):
+    show = Show(["Drama"], language)
+    assert show.language == expected
+
+def test_load_settings():
+    from tvsummary.config import load_settings
+
+    settings = load_settings()
+
+    assert settings.timeout == 10
+    assert settings.seed == 42
+    assert settings.sample_size == 10
