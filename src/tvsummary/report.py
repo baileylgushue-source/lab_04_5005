@@ -6,10 +6,7 @@ from .aggregations import GenreAggregation, LanguageAggregation
 def build_summary(shows, url):
     """Create a summary of the TV shows."""
 
-    summary = {
-        "source_url": url,
-        "records_processed": len(shows)
-    }
+    summary = {"source_url": url, "records_processed": len(shows)}
 
     for aggregation in [GenreAggregation(), LanguageAggregation()]:
         summary[aggregation.name] = aggregation.compute(shows)

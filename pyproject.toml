@@ -11,3 +11,8 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+[tool.ruff]
+extend-exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

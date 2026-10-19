@@ -1,11 +1,11 @@
-from pathlib import Path
-from dataclasses import dataclass
-import tomllib
-from tvsummary.errors import SettingsError
 import logging
+import tomllib
+from dataclasses import dataclass
+from pathlib import Path
+
+from tvsummary.errors import SettingsError
 
 logger = logging.getLogger(__name__)
-
 
 
 @dataclass(frozen=True)
@@ -17,11 +17,13 @@ class Settings:
     sample_size: int
     log_level: str
 
+
 URL = "https://api.tvmaze.com/shows?page=0"
 
 TIMEOUT = 10
 
 OUTPUT = Path("data/processed/summary.json")
+
 
 def load_settings(path="config/tvsummary.toml"):
     try:

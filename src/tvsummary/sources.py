@@ -1,4 +1,5 @@
 import requests
+
 from .models import Show
 
 
@@ -16,10 +17,7 @@ class TVShowSource:
         shows = []
 
         for record in records:
-            show = Show(
-                record.get("genres"),
-                record.get("language")
-            )
+            show = Show(record.get("genres"), record.get("language"))
             shows.append(show)
 
         return shows

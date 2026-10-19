@@ -1,12 +1,12 @@
 import unittest
 
-from tvsummary.models import Show
-from tvsummary.aggregations import GenreAggregation
-from tvsummary.aggregations import LanguageAggregation
 import pytest
 
-class TestShow(unittest.TestCase):
+from tvsummary.aggregations import GenreAggregation, LanguageAggregation
+from tvsummary.models import Show
 
+
+class TestShow(unittest.TestCase):
     def test_genres(self):
         show = Show(["Drama"], "English")
         self.assertEqual(show.genres, ["Drama"])
@@ -29,10 +29,7 @@ class TestShow(unittest.TestCase):
         self.assertIsNone(show.rating)
 
     def test_genre_aggregation(self):
-        shows = [
-            Show(["Drama"], "English"),
-            Show(["Drama", "Comedy"], "English")
-        ]
+        shows = [Show(["Drama"], "English"), Show(["Drama", "Comedy"], "English")]
 
         result = GenreAggregation().compute(shows)
 
@@ -42,7 +39,7 @@ class TestShow(unittest.TestCase):
         shows = [
             Show(["Drama"], "English"),
             Show(["Comedy"], "Spanish"),
-            Show(["Drama"], "English")
+            Show(["Drama"], "English"),
         ]
 
         result = LanguageAggregation().compute(shows)
@@ -52,6 +49,8 @@ class TestShow(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
 @pytest.mark.parametrize(
     "language, expected",
     [
@@ -65,6 +64,7 @@ def test_show_language(language, expected):
     show = Show(["Drama"], language)
     assert show.language == expected
 
+
 def test_load_settings():
     from tvsummary.config import load_settings
 
@@ -74,21 +74,26 @@ def test_load_settings():
     assert settings.seed == 42
     assert settings.sample_size == 10
 
+
 def test_missing_settings_file():
     import pytest
+
     from tvsummary.config import load_settings
     from tvsummary.errors import SettingsError
 
     with pytest.raises(SettingsError, match="Settings file not found"):
         load_settings("missing.toml")
+
+
 def test_settings_error_logging(caplog):
     import logging
+
     import pytest
+
     from tvsummary.config import load_settings
     from tvsummary.errors import SettingsError
 
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(SettingsError):
-            load_settings("missing.toml")
+    with caplog.at_level(logging.ERROR), pytest.raises(SettingsError):
+        load_settings("missing.toml")
 
     assert "Settings file not found" in caplog.text

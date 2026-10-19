@@ -7,7 +7,6 @@ from tvsummary.errors import TVSummaryError
 from tvsummary.logging_setup import setup_logging
 from tvsummary.report import build_summary, write_summary
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -19,9 +18,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    setup_logging()
+
     try:
         settings = load_settings(args.config)
-        setup_logging(settings.log_level)
+        logging.getLogger().setLevel(settings.log_level)
 
         logger.info("Starting TV show summary")
 
@@ -40,8 +41,8 @@ def main(argv: list[str] | None = None) -> int:
         logger.error("Application error: %s", error)
         return 1
 
-    except Exception:
-        logger.exception("Unexpected application error")
+    except Exception:  # noqa: BLE001 - Main handles unexpected errors with exit code 3.
+        logger.error("Unexpected application error", exc_info=False)
         return 3
 
 
