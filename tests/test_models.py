@@ -81,3 +81,14 @@ def test_missing_settings_file():
 
     with pytest.raises(SettingsError, match="Settings file not found"):
         load_settings("missing.toml")
+def test_settings_error_logging(caplog):
+    import logging
+    import pytest
+    from tvsummary.config import load_settings
+    from tvsummary.errors import SettingsError
+
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(SettingsError):
+            load_settings("missing.toml")
+
+    assert "Settings file not found" in caplog.text

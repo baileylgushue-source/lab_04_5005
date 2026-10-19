@@ -2,6 +2,9 @@ from pathlib import Path
 from dataclasses import dataclass
 import tomllib
 from tvsummary.errors import SettingsError
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -24,6 +27,7 @@ def load_settings(path="config/tvsummary.toml"):
     try:
         with open(path, "rb") as file:
             data = tomllib.load(file)
+            logger.info("Settings loaded from %s", path)
 
         return Settings(
             url=data["url"],
@@ -35,7 +39,9 @@ def load_settings(path="config/tvsummary.toml"):
         )
 
     except FileNotFoundError as error:
+        logger.error("Settings file not found: %s", path)
         raise SettingsError("Settings file not found") from error
 
     except KeyError as error:
+        logger.error("Missing required setting: %s", error)
         raise SettingsError("Missing required setting") from error
