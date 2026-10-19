@@ -1,5 +1,8 @@
 import argparse
 import logging
+import random
+import sys
+from importlib.metadata import version
 
 from tvsummary import TVShowSource
 from tvsummary.config import load_settings
@@ -29,7 +32,25 @@ def main(argv: list[str] | None = None) -> int:
         source = TVShowSource(settings.url)
         shows = source.fetch_shows()
 
+        rng = random.Random(settings.seed)
+        sample_size = min(settings.sample_size, len(shows))
+        shows = rng.sample(shows, sample_size)
+
+        logger.info("Selected %s TV shows", len(shows))
+
         summary = build_summary(shows, settings.url)
+        summary["run_info"] = {
+            "source_url": settings.url,
+            "timeout": settings.timeout,
+            "output": str(settings.output),
+            "seed": settings.seed,
+            "sample_size": settings.sample_size,
+            "log_level": settings.log_level,
+            "python_version": sys.version.split()[0],
+            "pytest_version": version("pytest"),
+            "mypy_version": version("mypy"),
+            "ruff_version": version("ruff"),
+        }
 
         settings.output.parent.mkdir(parents=True, exist_ok=True)
         write_summary(summary, settings.output)
@@ -48,3 +69,14 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def test_seeded_sampling():
+    import random
+
+    shows = ["A", "B", "C", "D", "E"]
+
+    first = random.Random(42).sample(shows, 3)
+    second = random.Random(42).sample(shows, 3)
+
+    assert first == second

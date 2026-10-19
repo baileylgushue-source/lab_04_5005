@@ -1,7 +1,7 @@
-name: tvsummary
-channels:
-  - defaults
+name: lab04-quality
+
 dependencies:
-  - python=3.11
+  - python=3.11.17
   - pip
-  
+  - pip:
+      - -r requirements.txt

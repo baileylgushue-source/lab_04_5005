@@ -97,3 +97,26 @@ def test_settings_error_logging(caplog):
         load_settings("missing.toml")
 
     assert "Settings file not found" in caplog.text
+
+
+def test_seeded_sampling():
+    import random
+
+    shows = ["A", "B", "C", "D", "E"]
+
+    first = random.Random(42).sample(shows, 3)
+    second = random.Random(42).sample(shows, 3)
+
+    assert first == second
+
+
+def test_sample_shows_fixture(sample_shows):
+    assert len(sample_shows) == 3
+    assert "Show A" in sample_shows
+
+
+def test_tmp_path(tmp_path):
+    file = tmp_path / "test_summary.txt"
+    file.write_text("TV show summary")
+
+    assert file.read_text() == "TV show summary"
